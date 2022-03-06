@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import mark.jwt.filter.MyFilter1;
 import mark.jwt.filter.MyFilter3;
 import mark.jwt.jwt.JwtAuthenticationFilter;
+import mark.jwt.jwt.JwtAuthorizationFilter;
+import mark.jwt.repository.UserRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,11 +21,12 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
+    private final UserRepository userRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
+//        http
+//                .addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
 
         http
                 .csrf().disable();
@@ -36,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")

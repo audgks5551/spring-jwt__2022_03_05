@@ -19,10 +19,10 @@ public class MyFilter3 implements Filter {
 
         if (req.getMethod().equals("POST")) {
             String headerAuth = req.getHeader("Authorization");
+            chain.doFilter(request, response);
             log.info("headerAuth = {}", headerAuth);
-
             if (headerAuth.equals("cos")) {
-                chain.doFilter(request, response);
+
             } else {
                 PrintWriter writer = res.getWriter();
                 writer.println("인증 안됨");
